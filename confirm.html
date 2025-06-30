@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirm Payment - OwO Coins</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6fa;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      max-width: 500px;
+      width: 100%;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .amount {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #4a90e2;
+      margin-bottom: 20px;
+    }
+    .field {
+      margin-bottom: 12px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      width: 100%;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .packing-box {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #27ae60;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    @keyframes fadeIn {
+      0% {opacity: 0;}
+      100% {opacity: 1;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Confirm Your Payment</h2>
+    <div class="amount" id="payAmount"></div>
+
+    <form id="confirmForm" action="https://formspree.io/f/xgvyrnnr" method="POST">
+      <input type="hidden" id="hiddenAmount" name="amount" />
+      <div class="field">
+        <input type="text" id="discord" name="discord" placeholder="Discord Username (e.g. OwO#1234)" required>
+      </div>
+      <div class="field">
+        <input type="text" name="utr" placeholder="Payment UTR ID" required>
+      </div>
+      <div class="field">
+        <input type="text" name="payoutname" placeholder="Your UPI Name" required>
+      </div>
+      <button type="submit">Confirm Order</button>
+    </form>
+
+    <div class="packing-box" id="packingBox">Your order is packing... 📦</div>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const amt = urlParams.get("amt") || "Not Provided";
+    const discordName = urlParams.get("discord") || "";
+
+    document.getElementById("payAmount").innerText = `You paid ₹${amt}`;
+    document.getElementById("hiddenAmount").value = amt;
+    document.getElementById("discord").value = decodeURIComponent(discordName);
+
+    const form = document.getElementById("confirmForm");
+    const packingBox = document.getElementById("packingBox");
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      packingBox.style.display = "block";
+
+      setTimeout(() => {
+        packingBox.innerText = "✅ Order received! Coins will be sent shortly.";
+        setTimeout(() => {
+          form.submit();
+        }, 1000);
+      }, 3000);
+    });
+  </script>
+</body>
+</html>
