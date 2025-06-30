@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buy OwO Coins</title>
   <style>
     body {
@@ -44,15 +44,6 @@
       background: #4a90e2;
       color: white;
     }
-    .field {
-      margin-bottom: 12px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
     #payBtn {
       width: 100%;
       background: #4a90e2;
@@ -63,24 +54,11 @@
       font-size: 1rem;
       cursor: pointer;
     }
-    .packing-box {
-      display: none;
-      text-align: center;
-      margin-top: 20px;
-      font-weight: bold;
-      font-size: 1.2rem;
-      color: #27ae60;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-    @keyframes fadeIn {
-      0% {opacity: 0;}
-      100% {opacity: 1;}
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Buy OwO Coins</h2>
+    <h2>Select OwO Coin Package</h2>
 
     <div class="prices">
       <div class="price-card" data-amount="20">₹20 = 3M</div>
@@ -90,30 +68,13 @@
       <div class="price-card" data-amount="200">₹200 = 33M</div>
     </div>
 
-    <form id="owoForm" action="https://formspree.io/f/xgvyrnnr" method="POST">
-      <div class="field">
-        <input type="text" id="discord" name="discord" placeholder="Discord Username (e.g. OwO#1234)" required>
-      </div>
-      <div class="field">
-        <input type="text" id="utr" name="utr" placeholder="Payment UTR ID" required>
-      </div>
-      <div class="field">
-        <input type="text" id="payoutname" name="payoutname" placeholder="Your UPI Name" required>
-      </div>
-      <input type="hidden" id="amount" name="amount" />
-      <button id="payBtn" type="submit" disabled>Pay Now</button>
-    </form>
-
-    <div class="packing-box" id="packingBox">Your order is packing... 📦</div>
+    <button id="payBtn" disabled>Pay Now</button>
   </div>
 
   <script>
     let selectedAmount = null;
     const cards = document.querySelectorAll('.price-card');
     const payBtn = document.getElementById('payBtn');
-    const packingBox = document.getElementById('packingBox');
-    const amountInput = document.getElementById('amount');
-    const form = document.getElementById('owoForm');
 
     cards.forEach(card => {
       card.addEventListener('click', () => {
@@ -122,39 +83,29 @@
         selectedAmount = card.getAttribute('data-amount');
         payBtn.disabled = false;
         payBtn.innerText = `Pay ₹${selectedAmount} Now`;
-        amountInput.value = selectedAmount;
       });
     });
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
+    payBtn.addEventListener('click', () => {
+      if (selectedAmount) {
+        const discord = prompt("Enter your Discord username:");
+        if (!discord || discord.trim() === "") {
+          alert("Please enter your Discord username.");
+          return;
+        }
 
-      const discord = document.getElementById('discord').value.trim();
-      const utr = document.getElementById('utr').value.trim();
-      const payoutname = document.getElementById('payoutname').value.trim();
+        const upiId = "hakimiwashifali@fam";
+        const note = `OwO Coins for ${discord}`;
+        const upiUrl = `upi://pay?pa=${upiId}&pn=OwO%20Store&tn=${encodeURIComponent(note)}&am=${selectedAmount}&cu=INR`;
 
-      if (!discord || !utr || !payoutname || !selectedAmount) {
-        alert('Please fill all fields.');
-        return;
-      }
+        navigator.clipboard.writeText(upiId);
+        window.open(upiUrl, '_blank');
 
-      const upiId = "hakimiwashifali@fam";
-      const name = "OwO Store";
-      const note = `OwO Coins for ${discord}`;
-      const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&tn=${encodeURIComponent(note)}&am=${selectedAmount}&cu=INR`;
-
-      navigator.clipboard.writeText(upiId);
-      window.location.href = upiUrl;
-
-      setTimeout(() => {
-        packingBox.style.display = 'block';
         setTimeout(() => {
-          packingBox.innerText = "✅ Order received! Coins will be sent shortly.";
-          form.submit();
-        }, 3000);
-      }, 2000);
+          window.location.href = `confirm.html?amt=${selectedAmount}&discord=${encodeURIComponent(discord)}`;
+        }, 5000);
+      }
     });
   </script>
 </body>
-  </html>
-  
+</html>
